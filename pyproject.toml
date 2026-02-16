@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "filter_synthesis"
+version = "0.1.0"
+description = "Coupling matrix filter synthesis toolkit"
+authors = [{name = "Jack"}]
+
+[tool.setuptools.packages.find]
+where = ["src"]
