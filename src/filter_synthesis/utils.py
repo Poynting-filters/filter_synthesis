@@ -2,7 +2,12 @@ import numpy as np
 
 
 def print_coupling_matrix(M):
-
+    """
+    Pretty prints the coupling matrix with row and column labels.
+    
+    M: ndarray
+        Coupling matrix to print
+    """
     labels = ["S"] + [f"{i}" for i in range(1, M.shape[0]-1)] + ["L"]
 
     print("     ", end="")
