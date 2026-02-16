@@ -2,6 +2,21 @@ import numpy as np
 
 
 def chebyshev_prototype(n: int, ripple_db: float):
+    """
+    Computes Chebyshev lowpass prototype element values.
+
+    Parameters
+    ----------
+    n : int
+        Filter order
+    ripple_db : float
+        Passband ripple in dB
+
+    Returns
+    -------
+    g : ndarray
+        Prototype element values g0 ... g(n+1)
+    """
 
     epsilon = np.sqrt(10**(ripple_db / 10) - 1)
 
