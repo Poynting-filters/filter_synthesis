@@ -58,9 +58,9 @@ def similarity_transform(n: int, i: int, j: int, theta: int) -> np.ndarray:
 
     return R
 
-def generate_folded_form_annihilation_sequence(n :int) -> list[tuple[int, int]]:
+def generate_folded_form_annihilation_sequence(n :int) -> list[tuple[int, int, tuple[int, int], int, int, int]]:
     """
-    Generates
+    Generates the sequence of elements to annihilate to reduce an N coupling matrix to canonical folded form
 
     Parameters
     ----------
@@ -68,7 +68,8 @@ def generate_folded_form_annihilation_sequence(n :int) -> list[tuple[int, int]]:
 
     Returns
     ----------
-    ann_order : a list of pairs of coordinates to be annihilated
+    ann_order : a list of pairs of coordinates to be annihilated together with their corresponding pivot and the additional
+    information needed tto calculate the pivot angle
     """
 
     ann_order = []
@@ -79,9 +80,64 @@ def generate_folded_form_annihilation_sequence(n :int) -> list[tuple[int, int]]:
         j = coordinate[1]
 
         for k in range(j-1, i + 1, -1):
-            ann_order.append((i, k))
+            ann_order.append((i, k, (k-1, k), i, k-1, -1))
 
         for k in range(i + 2, j - 1):
-            ann_order.append((k, j))
+            ann_order.append((k, j, (k, k + 1), k + 1, j, 1))
 
     return ann_order
+
+def n_coupling_matrix_to_canonical_folded_form(M :np.ndarray) -> np.ndarray:
+    """
+    Parameters
+    ----------
+    M: coupling matrix
+
+    Returns
+    ----------
+
+    A: coupling matrix in canonical folded form
+    """
+
+    size = M.shape[0]
+
+    if M.shape[1] != size or M.ndim != 2:
+        raise RuntimeError("Invalid Matrix Dimensions")
+
+    A = M
+    ann_order = generate_folded_form_annihilation_sequence(size)
+
+    for element in ann_order:
+        r, c, pivot, m, n, mult = element
+        val = A[r][c]
+        if val != 0:
+            theta = np.atan(mult * A[r][c] / A[m][n])
+            R = similarity_transform(size, pivot[0], pivot[1], theta)
+            Rt = R.transpose()
+
+            "A = R A Rt"
+            A = np.matmul(A, Rt)
+            A = np.matmul(R, A)
+
+
+
+    A = np.vectorize(remove_zero_approx_error)(A)
+
+    return A
+
+def remove_zero_approx_error(x):
+    tol = 1E-15
+    if abs(x) < tol:
+        return 0
+    else:
+        return x
+
+
+
+
+
+
+
+
+
+
