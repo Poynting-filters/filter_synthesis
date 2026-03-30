@@ -9,10 +9,7 @@ g = chebyshev_prototype(3, 0.1)
 
 M = coupling_matrix_from_g(g)
 
-w = np.linspace(-3, 3, 1000)
-
-
-S11, S21 = compute_sparameters(M, w)
+S11, S21, freq = compute_sparameters(M,6)
 print("Max S21 dB:", np.max(20*np.log10(np.abs(S21))))
 print("Max S11 dB:", np.max(20*np.log10(np.abs(S11))))
-plot_response(w, S11, S21)
+plot_response(freq, S11, S21)
