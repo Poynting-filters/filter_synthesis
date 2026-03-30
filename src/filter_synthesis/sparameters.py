@@ -1,43 +1,30 @@
 import numpy as np
 
-def compute_sparameters(M,w)
-    """
-    Computes S11 and S21 from coupling matrix using Cameron's formulation.
-    
-    Parameters
-    ----------
-    M : ndarray
-        Coupling matrix
-    w : ndarray
-        Frequency points (normalized)
 
-    Returns
-    -------
-    S11 : ndarray
-    S21 : ndarray
-    """
+def compute_sparameters(M, w):
+
     N = M.shape[0]
 
     I = np.eye(N)
-    S11 = np.zeros(len(w), dtype = complex)
-    S21 = np.zeros(len(w), dtype = complex)
 
-    #Computation of S-parameters without using matrix inversion, but rather solving linear systems
-    b1 = np.zeros(N, dtype=complex)
-    b1[0] = 1
+    # Source/load excitation matrix
+    W = np.zeros((N, 2), dtype=complex)
 
-    b2 = np.zeros(N, dtype=complex)
-    b2[N-1] = 1
+    W[0, 0] = 1      # source
+    W[N-1, 1] = 1    # load
+
+    S11 = np.zeros(len(w), dtype=complex)
+    S21 = np.zeros(len(w), dtype=complex)
 
     for i, omega in enumerate(w):
 
-        A = 1j * omega * I - M
+        A = omega * I - M + 1j * (W @ W.T)
 
-        x1 = np.linalg.solve(A, b1)
-        x2 = np.linalg.solve(A, b2)
+        A_inv = np.linalg.inv(A)
 
-        S11[i] = 1 - 2 * x1[0]
+        S = np.eye(2) - 2j * (W.T @ A_inv @ W)
 
-        S21[i] = 2 * x2[0]
+        S11[i] = S[0, 0]
+        S21[i] = S[1, 0]
 
     return S11, S21
