@@ -56,6 +56,7 @@ def similarity_transform(n: int, i: int, j: int, theta: int) -> np.ndarray:
     R[i][j] = -s_theta
     R[j][i] = s_theta
 
+    R = np.vectorize(remove_zero_approx_error)(R)
     return R
 
 def generate_folded_form_annihilation_sequence(n :int) -> list[tuple[int, int, tuple[int, int], int, int, int]]:
@@ -118,8 +119,6 @@ def n_coupling_matrix_to_canonical_folded_form(M :np.ndarray) -> np.ndarray:
             "A = R A Rt"
             A = np.matmul(A, Rt)
             A = np.matmul(R, A)
-
-
 
     A = np.vectorize(remove_zero_approx_error)(A)
 

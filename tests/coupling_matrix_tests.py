@@ -69,6 +69,5 @@ class CouplingMatrixTests(unittest.TestCase):
         assert A[3][5] == 0
 
 
-
 if __name__ == '__main__':
     unittest.main()
