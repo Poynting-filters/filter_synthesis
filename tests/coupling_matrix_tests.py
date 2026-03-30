@@ -27,6 +27,22 @@ class CouplingMatrixTests(unittest.TestCase):
 
         return
 
+    def test_generate_folded_form_annihilation_sequence(self):
+
+        correct = [(0, 5), (0, 4), (0, 3), (0, 2), (2, 6), (3, 6), (4, 6), (1, 4), (1, 3), (3, 5)]
+        output = cm.generate_folded_form_annihilation_sequence(7)
+
+        print(output)
+
+        assert len(output) == len(correct)
+        for i in range(0, len(output)):
+            assert output[i][0] == correct[i][0]
+            assert output[i][1] == correct[i][1]
+
+        return
+
+
+
 
 
 

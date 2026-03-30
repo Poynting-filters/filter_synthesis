@@ -58,3 +58,30 @@ def similarity_transform(n: int, i: int, j: int, theta: int) -> np.ndarray:
 
     return R
 
+def generate_folded_form_annihilation_sequence(n :int) -> list[tuple[int, int]]:
+    """
+    Generates
+
+    Parameters
+    ----------
+    n: size of matrix nxn
+
+    Returns
+    ----------
+    ann_order : a list of pairs of coordinates to be annihilated
+    """
+
+    ann_order = []
+    off_diag = [(i, n-i-1) for i in range(0, n//2)]
+
+    for coordinate in off_diag:
+        i = coordinate[0]
+        j = coordinate[1]
+
+        for k in range(j-1, i + 1, -1):
+            ann_order.append((i, k))
+
+        for k in range(i + 2, j - 1):
+            ann_order.append((k, j))
+
+    return ann_order
