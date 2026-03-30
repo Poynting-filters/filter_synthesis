@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def chebyshev_prototype(n: int, ripple_db: float):
+def chebyshev_prototype(n: int, return_loss:float):
     """
     Computes Chebyshev lowpass prototype element values.
 
@@ -9,46 +9,26 @@ def chebyshev_prototype(n: int, ripple_db: float):
     ----------
     n : int
         Filter order
-    ripple_db : float
-        Passband ripple in dB
+    return_loss : float
+            Return loss in dB
 
     Returns
     -------
     g : ndarray
         Prototype element values g0 ... g(n+1)
     """
+    # Calculate epsilon from return loss
+    epsilon = np.sqrt(10**(return_loss/10) - 1)
 
-    epsilon = np.sqrt(10**(ripple_db / 10) - 1)
+    # Calculate beta and gamma
+    beta = np.arcsinh(1/epsilon) / n
+    gamma = np.sinh(beta)
 
-    alpha = np.arcsinh(1 / epsilon) / n
-
-    sigma = np.sinh(alpha)
-
-    g = np.zeros(n + 2)
-
+    # Calculate prototype element values
+    g = np.zeros(n+2)
     g[0] = 1
-
-    a = np.zeros(n)
-    b = np.zeros(n)
-
-    for k in range(1, n + 1):
-
-        a[k - 1] = np.sin((2 * k - 1) * np.pi / (2 * n))
-
-        b[k - 1] = sigma**2 + np.sin(k * np.pi / n)**2
-
-    g[1] = (2 * a[0]) / sigma
-
-    for k in range(2, n + 1):
-
-        g[k] = (4 * a[k - 2] * a[k - 1]) / (b[k - 2] * g[k - 1])
-
-    if n % 2 == 0:
-
-        g[n + 1] = (np.cosh(alpha / 2) / np.sinh(alpha / 2))**2
-
-    else:
-
-        g[n + 1] = 1
+    for i in range(1, n+1):
+        g[i] = (2 * gamma * np.sin((2*i-1)*np.pi/(2*n)) + 2 * np.sin((2*i-1)*np.pi/(2*n))**2) / (gamma**2 + np.sin((2*i-1)*np.pi/(2*n))**2)
+    g[n+1] = 1
 
     return g
